@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import GlobalStyles from "../../constants/GlobalStyles";
 
@@ -7,6 +7,8 @@ import { Image } from "expo-image";
 import { AppForm, AppFormField, SubmitButton } from "../../components/form";
 import { COLORS } from "../../constants/theme";
 import SocialButton from "../../components/auth/SocialButton";
+import { useRouter } from "expo-router";
+import axios from "axios";
 const initialValues = {
   email: "",
   password: "",
@@ -21,7 +23,34 @@ interface Props {
   navigation: any;
 }
 
+interface LoginType {
+  email: string;
+  password: string;
+}
+
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
+  const router = useRouter();
+
+  const handleSubmit = async (values: LoginType) => {
+    try {
+      // Make a POST request to your login endpoint
+      const response = await axios.post("http://localhost:3000/auth/sign-in", {
+        email: values.email,
+        password: values.password,
+      });
+
+      // Handle the response
+      if (response) {
+        // Login successful, handle accordingly
+        console.log("response", response.data);
+        Alert.alert("Login Successful", "Welcome!");
+      }
+    } catch (error) {
+      // Handle errors, such as network errors
+      console.error(error);
+      Alert.alert("Error", "Something went wrong. Please try again later.");
+    }
+  };
   return (
     <View style={GlobalStyles.parentContainer}>
       <ScrollView>
@@ -31,13 +60,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             style={styles.image}
             source={require("../../assets/icon.png")}
           />
-          <Text style={GlobalStyles.h3}>Login to Apprentis</Text>
+          <Text style={GlobalStyles.h4}>Login to Apprentis</Text>
         </View>
         <View style={GlobalStyles.screenContainer}>
           <AppForm
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values: object) => console.log(values)}
+            onSubmit={(values: object) => handleSubmit(values)}
           >
             <AppFormField
               name="email"
@@ -56,7 +85,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               secureTextEntry
             />
 
-            <View style={{ marginVertical: 15 }} />
+            <View style={{ marginVertical: 7 }} />
             <SubmitButton title="Login" textColor={COLORS.white} />
           </AppForm>
 
@@ -65,14 +94,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               Don't have an account?
             </Text>
             <Text
-              onPress={() => navigation.navigate("register")}
+              onPress={() => router.push("register")}
               style={GlobalStyles.boldTextPrimary}
             >
               Register
             </Text>
           </View>
 
-          <View>
+          {/* <View>
             <Text style={styles.socialHeading}>Or login with</Text>
             <View style={styles.socialButtonContainer}>
               <SocialButton
@@ -89,7 +118,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 image={require("../../assets/icons/email.png")}
               />
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </View>
@@ -100,8 +129,8 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   image: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
   },
   topContainer: {
     justifyContent: "center",
@@ -113,6 +142,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
+    marginTop: 0,
   },
   socialButtonContainer: {
     flexDirection: "row",

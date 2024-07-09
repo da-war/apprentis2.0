@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   input: {
-    paddingVertical: Platform.OS === "ios" ? 15 : 10,
+    paddingVertical: Platform.OS === "ios" ? 12 : 7,
     overflow: "hidden",
     borderColor: COLORS.border,
     borderBottomWidth: 1,
@@ -67,6 +67,5 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     fontFamily: FONTS.semiBold,
     fontSize: 14,
-    marginBottom: 5,
   },
 });

@@ -1,41 +1,76 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
+import { Image } from "expo-image";
+import GlobalStyles from "@/constants/GlobalStyles";
 
-import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
+import AppButton from "@/components/AppButton";
 
-const index = () => {
-  const [fontsLoaded] = useFonts({
-    EncodeSansBold: require("../assets/fonts/Bold.ttf"),
-    EncodeSansSemiBold: require("../assets/fonts/SemiBold.ttf"),
-    EncodeSansMedium: require("../assets/fonts/Medium.ttf"),
-    EncodeSansRegular: require("../assets/fonts/Regular.ttf"),
-    EncodeSansLight: require("../assets/fonts/Light.ttf"),
-  });
+import * as Animatable from "react-native-animatable";
+import { StatusBar } from "expo-status-bar";
+import AppLG from "@/components/global/AppLG";
+import { COLORS } from "@/constants/theme";
 
-  if (!fontsLoaded) return null;
+interface Props {
+  navigation: any;
+}
+const LandingScreen: React.FC<Props> = () => {
+  const router = useRouter();
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <Text>Welcome to the app</Text>
-      <Text onPress={() => router.push("/login")} style={styles.text}>
-        Login
-      </Text>
-    </SafeAreaView>
+    <View style={GlobalStyles.parentContainer}>
+      <View style={GlobalStyles.screenContainer}>
+        <View style={styles.topContainer}>
+          <Animatable.View
+            animation="zoomIn"
+            duration={2000}
+            style={[
+              styles.image,
+              { justifyContent: "center", alignItems: "center" },
+            ]}
+          >
+            <Image
+              contentFit="contain"
+              style={styles.image}
+              source={require("../assets/icon.png")}
+            />
+          </Animatable.View>
+          <Text style={[GlobalStyles.h4, { marginTop: -20 }]}>
+            Welcome to Apprentis
+          </Text>
+        </View>
+
+        <Animatable.View
+          duration={2000}
+          animation="fadeIn"
+          style={styles.bottomContainer}
+        >
+          <AppButton
+            title="Register"
+            onPress={() => router.push("/register")}
+          />
+          <AppButton title="Login" onPress={() => router.push("/login")} />
+        </Animatable.View>
+      </View>
+      <StatusBar style="dark" />
+    </View>
   );
 };
 
-export default index;
+export default LandingScreen;
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
+  image: {
+    width: "66%",
+    height: 200,
+  },
+  topContainer: {
+    paddingVertical: 20,
     justifyContent: "center",
     alignItems: "center",
   },
-  text: {
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: "bold",
+  bottomContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingBottom: 20,
   },
 });

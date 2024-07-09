@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import GlobalStyles from "../../constants/GlobalStyles";
 
@@ -7,6 +7,10 @@ import { Image } from "expo-image";
 import { AppForm, AppFormField, SubmitButton } from "../../components/form";
 import { COLORS } from "../../constants/theme";
 import SocialButton from "../../components/auth/SocialButton";
+import { useRouter } from "expo-router";
+
+import axios from "axios";
+
 const initialValues = {
   email: "",
   password: "",
@@ -17,7 +21,7 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email().required().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .oneOf([Yup.ref("password")], "Passwords must match")
     .required()
     .label("Confirm Password"),
 });
@@ -26,7 +30,40 @@ interface Props {
   navigation: any;
 }
 
+// it will be resgister type object having name, email, password and confirm password
+
+interface RegisterType {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
+  const router = useRouter();
+
+  const handleSubmit = async (values: RegisterType) => {
+    try {
+      // Make a POST request to your login endpoint
+      const response = await axios.post("http://localhost:3000/auth/sign-up", {
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        role: "user",
+      });
+
+      // Handle the response
+      if (response) {
+        // Login successful, handle accordingly
+        console.log("response", response.data);
+        Alert.alert("Registeration Successful", "Welcome!");
+      }
+    } catch (error) {
+      // Handle errors, such as network errors
+      console.error(error);
+      Alert.alert("Error", "Something went wrong. Please try again later.");
+    }
+  };
   return (
     <View style={GlobalStyles.parentContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -36,13 +73,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             style={styles.image}
             source={require("../../assets/icon.png")}
           />
-          <Text style={GlobalStyles.h3}>Create an Account</Text>
+          <Text style={GlobalStyles.h4}>Create an Account</Text>
         </View>
         <View style={GlobalStyles.screenContainer}>
           <AppForm
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values: object) => console.log(values)}
+            onSubmit={(values: RegisterType) => handleSubmit(values)}
           >
             <AppFormField
               name="name"
@@ -82,14 +119,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               Don't have an account?
             </Text>
             <Text
-              onPress={() => navigation.navigate("login")}
+              onPress={() => router.push("/login")}
               style={GlobalStyles.boldTextPrimary}
             >
               Login
             </Text>
           </View>
 
-          <View>
+          {/* <View>
             <Text style={styles.socialHeading}>Or login with</Text>
             <View style={styles.socialButtonContainer}>
               <SocialButton
@@ -106,7 +143,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 image={require("../../assets/icons/email.png")}
               />
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </View>
@@ -117,19 +154,20 @@ export default RegisterScreen;
 
 const styles = StyleSheet.create({
   image: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
   },
   topContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 15,
   },
   centered: {
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
+    marginTop: 0,
   },
   socialButtonContainer: {
     flexDirection: "row",

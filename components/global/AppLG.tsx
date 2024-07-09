@@ -4,12 +4,16 @@ import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "../../constants/theme";
 
-interface Props {}
+interface Props {
+  colors: string[];
+}
 
-const AppLG: React.FC<Props> = () => {
+const AppLG: React.FC<Props> = ({
+  colors = [COLORS.primary, COLORS.secondary],
+}) => {
   return (
     <LinearGradient
-      colors={[COLORS.primary, COLORS.secondary]}
+      colors={colors}
       style={styles.linearGradient}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}

@@ -1,4 +1,4 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import GlobalStyles from "../../constants/GlobalStyles";
 
@@ -7,8 +7,6 @@ import { Image } from "expo-image";
 import { AppForm, AppFormField, SubmitButton } from "../../components/form";
 import { COLORS } from "../../constants/theme";
 import SocialButton from "../../components/auth/SocialButton";
-import { useRouter } from "expo-router";
-import axios from "axios";
 const initialValues = {
   email: "",
   password: "",
@@ -23,45 +21,7 @@ interface Props {
   navigation: any;
 }
 
-interface LoginType {
-  email: string;
-  password: string;
-}
-
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const router = useRouter();
-
-  const handleSubmit = async (values: LoginType) => {
-    try {
-      // Make a POST request to your login endpoint
-      const response = await axios.post("http://localhost:3000/auth/sign-in", {
-        email: values.email,
-        password: values.password,
-      });
-
-      // Handle the response
-      if (response) {
-        // Login successful, handle accordingly
-        console.log("response", response.data);
-        Alert.alert("Login Successful", "Welcome!");
-        router.push("/home");
-      }
-    } catch (error) {
-      if (error instanceof Yup.ValidationError) {
-        console.log("Invalid Form Data", error.message);
-      }
-      if (error instanceof axios.AxiosError) {
-        const response = error.response;
-        if (response) {
-          Alert.alert("Login Failed, Form error", response.data.message);
-        }
-        console.log("Error");
-      }
-      if (error instanceof Error) {
-        console.log("Error", error.message);
-      }
-    }
-  };
   return (
     <View style={GlobalStyles.parentContainer}>
       <ScrollView>
@@ -69,15 +29,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           <Image
             contentFit="cover"
             style={styles.image}
-            source={require("../../assets/icon.png")}
+            source={require("../../../assets/icon.png")}
           />
-          <Text style={GlobalStyles.h4}>Login to Apprentis</Text>
+          <Text style={GlobalStyles.h3}>Login to Apprentis</Text>
         </View>
         <View style={GlobalStyles.screenContainer}>
           <AppForm
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values: object) => handleSubmit(values)}
+            onSubmit={(values: object) => console.log(values)}
           >
             <AppFormField
               name="email"
@@ -96,7 +56,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               secureTextEntry
             />
 
-            <View style={{ marginVertical: 7 }} />
+            <View style={{ marginVertical: 15 }} />
             <SubmitButton title="Login" textColor={COLORS.white} />
           </AppForm>
 
@@ -105,31 +65,31 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               Don't have an account?
             </Text>
             <Text
-              onPress={() => router.push("register")}
+              onPress={() => navigation.navigate("register")}
               style={GlobalStyles.boldTextPrimary}
             >
               Register
             </Text>
           </View>
 
-          {/* <View>
+          <View>
             <Text style={styles.socialHeading}>Or login with</Text>
             <View style={styles.socialButtonContainer}>
               <SocialButton
                 style={{ backgroundColor: COLORS.primary }}
-                image={require("../../assets/icons/google.png")}
+                image={require("../../../assets/icons/google.png")}
               />
               <SocialButton
                 style={{ backgroundColor: COLORS.primary }}
-                image={require("../../assets/icons/apple.png")}
+                image={require("../../../assets/icons/apple.png")}
               />
 
               <SocialButton
                 style={{ backgroundColor: COLORS.primary }}
-                image={require("../../assets/icons/email.png")}
+                image={require("../../../assets/icons/email.png")}
               />
             </View>
-          </View> */}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -140,8 +100,8 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   image: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
   },
   topContainer: {
     justifyContent: "center",
@@ -153,7 +113,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
-    marginTop: 0,
   },
   socialButtonContainer: {
     flexDirection: "row",

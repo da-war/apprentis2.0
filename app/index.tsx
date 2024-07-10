@@ -10,12 +10,18 @@ import * as Animatable from "react-native-animatable";
 import { StatusBar } from "expo-status-bar";
 import AppLG from "@/components/global/AppLG";
 import { COLORS } from "@/constants/theme";
+import { useSelector } from "react-redux";
+import { getAuthState } from "@/store/authSlice";
 
 interface Props {
   navigation: any;
 }
 const LandingScreen: React.FC<Props> = () => {
   const router = useRouter();
+
+  const authState = useSelector(getAuthState);
+  console.log("authState", authState);
+
   return (
     <View style={GlobalStyles.parentContainer}>
       <View style={GlobalStyles.screenContainer}>
